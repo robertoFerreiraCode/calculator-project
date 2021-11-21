@@ -25,7 +25,6 @@ const displayInput = (button, updatedCalculation = 0) => {
         currentInput = updatedCalculation;
     }
     screenText.textContent = currentInput;
-    console.log("current equation test: ", currentInput);
 }
 
 // returns true if last char in current input is operator
