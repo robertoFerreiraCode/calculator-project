@@ -1,22 +1,19 @@
-import * as calc from "./calculations.js";
-// sort negative values out within calcs
+import {calcInput} from "./calculations.js";
 
 const buttons = document.querySelectorAll(".button");
 const screenText = document.querySelector(".screen__text");
+const operatorList = ["+", "-", "*", "/", "="];
 
 const getInput = () => {  
-    let currentInput = screenText.textContent.trim();
+    const currentInput = screenText.textContent.trim();
     return currentInput;
-}
-
-const getOperatorList = () => {
-    return ["+", "-", "*", "/", "="];
 }
 
 const clearInput = () => {
     screenText.textContent = "0";
 }
 
+// output calculation to screen 
 const displayInput = (button, updatedCalculation = 0) => {
     let currentInput;
     if (updatedCalculation === 0) {
@@ -25,31 +22,35 @@ const displayInput = (button, updatedCalculation = 0) => {
             ? currentInput = button.value 
             : currentInput += button.value;    
     } else {
-        console.log("updatedCalculation: ", updatedCalculation);
         currentInput = updatedCalculation;
     }
     screenText.textContent = currentInput;
-    console.log("current equation: ", currentInput);
+    console.log("current equation test: ", currentInput);
 }
 
 // returns true if last char in current input is operator
 const lastCharOperator = () => {
-    const operatorList = getOperatorList();
     const currentInput = getInput();
     return (operatorList.includes(currentInput.split("")[currentInput.length-1]));
 }
 
-// returns the operator within the input
-const findOperator = () => {
-    const operatorList = getOperatorList();
+// returns all operators within the input including negatives
+const findAllOperators = () => {
     const currentInput = getInput();
-    return operatorList.find((c) => currentInput.split("").includes(c));
+    let currentOperators = currentInput.split("").filter(c => operatorList.includes(c));
+    return currentOperators;
+}
+
+// returns the operator within the input for calculation
+const findOperator = () => {
+    let currentOperators = findAllOperators();
+    if (currentOperators.length > 1) return currentOperators[1].toString(); //handles negative values
+    else return currentOperators.toString();
 }
 
 // checks if current operation currently contains an operator
 const containsOperator = () => {
     const currentInput = getInput();
-    const operatorList = getOperatorList();
     return currentInput.split("").some((c) => operatorList.includes(c));
 }
 
@@ -69,32 +70,38 @@ const validDecimal = () => {
     }
     return true;
 }
+
 const handleInput = (button) => {
+    const input = getInput();
     if (!isNaN(button.value)) {       //runs if input is num
         displayInput(button);
     } 
-    else if (button.value === "." && validDecimal()) { //runs if valid decimal
+    else if (button.value === "." && validDecimal()) { 
         displayInput(button);
     }
-    else if (!lastCharOperator()) {   //runs if operator and not double operator
-        
+    else if (button.value === "clear") { 
+        clearInput();
+    }
+    else if (!lastCharOperator()) {   //runs if operator and not two next to each other
         if (containsOperator()) {     //if input is operator but input already contains operator run calculation
-            const updatedCalc = calc.calcInput(getInput(), findOperator());
-            console.log("line 82");
-            displayInput(button, updatedCalc);
-        } 
-        switch (button.value) {
-            case "=": //handled previously
-                break;
-            case ".": //handled previously
-                break;
-            case "clear":
-                clearInput();
-                break;
-            default:
+            const updatedCalc = calcInput(input, findOperator());
+            if (updatedCalc === getInput()) {
+                console.log("basasdo");
                 displayInput(button);
+                return;
+            }
+            if (input.charAt(0) === "-" && findAllOperators().length === 1 && button.value !== "=") { //handle negative
+                displayInput(button, updatedCalc); //calc neg number then display operator after
+                displayInput(button);
+            } else {
+                displayInput(button, updatedCalc);
+            }
+        } else if (button.value === "=") {   //handling single num then equaling 
+            return;
+        } 
+        else {    //handles negative for first input 
+            displayInput(button);
         }
-        
     }
 }
 

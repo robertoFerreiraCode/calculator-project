@@ -1,15 +1,23 @@
 export const calcInput = (input, operator) => {
     input = input.split(operator);
+    const cleanedInput = cleanInput(input);
     switch (operator) {
         case "+":
-            return plus(input);
+            return plus(cleanedInput);
         case "-":
-            return minus(input);
+            return minus(cleanedInput);
         case "*":
-            return multiply(input);
+            return multiply(cleanedInput);
         case "/":
-            return divide(input);
+            return divide(cleanedInput);
     }
+}
+
+const cleanInput = (input) => { //handle empty decimals
+    return input.map(element => {
+       if (element === ".") return element = "0"; 
+       return element;
+    });
 }
 
 const plus = (input) => {
@@ -25,13 +33,11 @@ const multiply = (input) => {
 }
 
 const divide = (input) => {
-    const firstNum = input[0];
-    const secondNum = input[1];
+    let firstNum = input[0];
+    let secondNum = input[1];
     if (secondNum === "0" || firstNum === "0") return "0";
-    else if (firstNum < 0) {
-        console.log(firstNum);
+    else if (firstNum < 0) { //handle negative divisions
         firstNum *= -1;
-        console.log(firstNum);
         return (-1 * (+firstNum / +secondNum)).toString()
     }
     return (+firstNum / +secondNum).toString();
