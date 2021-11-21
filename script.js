@@ -86,7 +86,6 @@ const handleInput = (button) => {
         if (containsOperator()) {     //if input is operator but input already contains operator run calculation
             const updatedCalc = calcInput(input, findOperator());
             if (updatedCalc === getInput()) {
-                console.log("basasdo");
                 displayInput(button);
                 return;
             }
