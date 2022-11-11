@@ -20,19 +20,19 @@ const cleanInput = (input) => { //handle empty decimals
     });
 }
 
-const plus = (input) => {
+export const plus = (input) => {
     return (+input[0] + +input[1]).toString();
 }
 
-const minus = (input) => {
+export const minus = (input) => {
     return (+input[0] - +input[1]).toString();
 }
 
-const multiply = (input) => {
+export const multiply = (input) => {
     return (+input[0] * +input[1]).toString();
 }
 
-const divide = (input) => {
+export const divide = (input) => {
     let firstNum = input[0];
     let secondNum = input[1];
     if (secondNum === "0" || firstNum === "0") return "0";
